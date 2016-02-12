@@ -42,3 +42,9 @@ angular.module('forinlanguages.services', [])
     sendData: sendData
   }
 })
+
+.factory('FileFactory', function() {
+
+  return {
+  }
+})

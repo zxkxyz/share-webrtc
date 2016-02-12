@@ -1,6 +1,8 @@
 angular.module('forinlanguages.peer', [])
 
 .controller('PeerController', function($scope, $window, $location, PeerFactory) {
+  // Init file input
+  $scope.file = null;
   // Init input models
   $scope.person = "";
   $scope.message = "";
@@ -33,6 +35,8 @@ angular.module('forinlanguages.peer', [])
     $scope.url = url;
     $scope.$digest();
 
+    console.log($scope.me);
+
     $scope.me.on('connection', function(c) {
     PeerFactory.handleConnection(c,
       function(data) {
@@ -43,6 +47,7 @@ angular.module('forinlanguages.peer', [])
         if(bool) {
           delete $scope.peers[conn.peer];
           $scope.$digest();
+          alert("Person with ID " + conn.peer + " left the chat.");
         } else {
           $scope.peers[conn.peer] = conn;
           $scope.$digest();
@@ -53,6 +58,18 @@ angular.module('forinlanguages.peer', [])
     $scope.me.on('error', function(err) {
       console.log("Some ERROR:", err);
     });
+
+    $scope.me.dataConnection.on('data', function(data) {
+      saveAs(data, 'itworks.png');
+    });
+  });
+
+  $scope.$watch('file', function (files) {
+    for(var x in $scope.peers) {
+      if($scope.peers[x].dataConnection.open) {
+        $scope.peers[x].dataConnection.send(files[0]);
+      }
+    }
   });
 
   $scope.connectTo = function() {

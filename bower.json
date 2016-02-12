@@ -1,0 +1,29 @@
+{
+  "name": "ForInLanguages",
+  "description": "our greenfield project peer 2 peer sharing",
+  "main": "application.js",
+  "authors": [
+    "Zak Golding <hello@zakarhino.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/forinlanguages/forinlanguages",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.0",
+    "ng-file-upload": "^11.2.3",
+    "bootstrap": "^3.3.6",
+    "moment": "momentjs#^2.11.2",
+    "peerjs": "^0.3.14",
+    "angular-file-model": "^0.3.1",
+    "filesaver": "*",
+    "FileSaver": "https://github.com/Teleborder/FileSaver.js"
+  }
+}

@@ -7,12 +7,15 @@
     <meta name="author" content="For-In Languages">
 
     <link rel="stylesheet" type="text/css" href="styles/styles.css" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
-    <script src="http://cdn.peerjs.com/0.3/peer.js"></script>
-    <script src="http://momentjs.com/downloads/moment-with-locales.min.js"></script>
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css" />
+
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/angular-file-model/angular-file-model.js"></script>
+    <script src="lib/peerjs/peer.min.js"></script>
+    <script src="lib/moment/min/moment.min.js"></script>
 
     <script src="app/peer/peer.js"></script>
+    <script src="app/file/file.js"></script>
     <script src="app/services/services.js"></script>
     <script src="app/application.js"></script>
   </head>
@@ -28,6 +31,12 @@
 
     <h3>My ID: {{ me.id }}</h3>
     <h3>Your URL: {{ url }}</h3>
+    <h3>Peers:</h3>
+      <div placeholder="No new messages" ng-model ='peers'>
+        <div class='peer_item' ng-repeat="val in peers">
+          <div>{{ val.peer }}</div>
+        </div>
+      </div>
     <h3>Messages:</h3>
     <div class='chatArea' class="col-md-4">
       <form ng-submit ='sendData()'>
@@ -36,15 +45,8 @@
         <button type='submit'>Send</button>
       </form>
 
-      <div class = 'row'>
-        <div ngf-drop ngf-select ng-model="files"
-          class="drop-box"
-          ngf-drag-over-class="'dragover'"
-          ngf-multiple="true" ngf-allow-dir="true"
-          accept="image/*,application/pdf"
-          ngf-pattern="'image/*,application/pdf'">
-            Drop pdfs or images here or click to upload
-        </div>
+      <div class='row' ng-controller="FileController">
+        <input type="file" value="choosefile" file-model='file' multiple>
       </div>
 
       <div>Messages</div>
@@ -54,5 +56,4 @@
         </div>
       </div>
     </div>
-
   </body>
