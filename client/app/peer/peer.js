@@ -5,16 +5,32 @@ angular.module('forinlanguages.peer', [])
   $scope.person = "";
   $scope.message = "";
   $scope.username = "";
+  $scope.me = {};
 
   // Object of connected peers and messages received/send
   $scope.peers = {};
   $scope.messages = [];
 
+  // $scope.$watch('peers', function(newVal, oldVal) {
+  //   console.log('detected change in peers obj');
+  //   $scope.peers = $scope.peers;
+  // });
+
+  // $scope.$watch('messages', function(newVal, oldVal) {
+  //   console.log('detected change in messages array');
+  //   $scope.messages = $scope.messages;
+  // });
+
+  // $scope.$watch('me', function(newVal, oldVal) {
+  //   console.log('detected change in me object');
+  //   $scope.me = $scope.me;
+  // });
+
   // Init peer instance for user
-  $scope.me = PeerFactory.makePeer($scope.me);
+  PeerFactory.makePeer($scope.me, $scope);
 
   $scope.me.on('connection', function(c) {
-    PeerFactory.handleConnection(c, $scope.peers, $scope.messages);
+    PeerFactory.handleConnection(c, $scope.peers, $scope.messages, $scope);
   });
 
   $scope.me.on('error', function(err) {
@@ -24,10 +40,7 @@ angular.module('forinlanguages.peer', [])
   $scope.connectTo = function() {
     var conn = PeerFactory.connectTo($scope.person, $scope.peers, $scope.me)
     conn.on('open', function() {
-      PeerFactory.handleConnection(conn, $scope.peers, $scope.messages);
-      console.log('connected to someone?');
-      console.log($scope.peers);
-      console.log("Length:", Object.keys($scope.peers).length);
+      PeerFactory.handleConnection(conn, $scope.peers, $scope.messages, $scope);
     });
     conn.on('error', function(err) { alert(err); });
   }
@@ -46,7 +59,6 @@ angular.module('forinlanguages.peer', [])
     };
     $scope.messages.push(dataToSend);
     PeerFactory.sendData(dataToSend, $scope.peers);
-    console.log('send data');
   };
 
   $window.onunload = $window.onbeforeunload = function(e) {
