@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html ng-app='forinlanguages'>
   <head>
@@ -27,8 +26,6 @@
     <input type="text" name="input" ng-model="person">
     <button ng-click="connectTo()">Connect</button>
 
-    <div class = peerIdLink> {{'Your link is:' + "http//forinlanguages.com/"+ peer}}
-
     <h3>My ID: {{ me.id }}</h3>
     <h3>Messages:</h3>
 
@@ -51,11 +48,11 @@
       </div>
 
       <div>Messages</div>
-      <textarea placeholder="No new messages" ng-model ='messages'>
+      <div placeholder="No new messages" ng-model ='messages'>
         <div class='message_item' ng-repeat="val in messages">
           <div>{{ val.time }} - <b>{{val.name}}</b>: {{ val.text }}</div>
         </div>
-      </textarea>
+      </div>
     </div>
 
   </body>
