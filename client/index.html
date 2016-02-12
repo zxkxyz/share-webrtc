@@ -1,8 +1,14 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html ng-app='forinlanguages'>
   <head>
     <meta charset="utf-8" />
-    <title>ForInLanguages</title>
+    <title>For-In Languages</title>
+    <meta name="description" content="P2P Filesharing">
+    <meta name="author" content="For-In Languages">
+
+    <link rel="stylesheet" type="text/css" href="styles/styles.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
     <script src="http://cdn.peerjs.com/0.3/peer.js"></script>
     <script src="http://momentjs.com/downloads/moment-with-locales.min.js"></script>
@@ -13,18 +19,43 @@
   </head>
   <body ng-controller="PeerController">
     <h1>For-In Languages</h1>
+
     <label for="input">Username:</label>
     <input type="text" name="username" ng-model="username">
+
     <label for="input">Peer:</label>
     <input type="text" name="input" ng-model="person">
     <button ng-click="connectTo()">Connect</button>
-    <label for="message">Message:</label>
-    <input type="text" name="message" ng-model="message">
-    <button ng-click="sendData()">Send</button>
+
+    <div class = peerIdLink> {{'Your link is:' + "http//forinlanguages.com/"+ peer}}
+
     <h3>My ID: {{ me.id }}</h3>
     <h3>Messages:</h3>
-    <div class='message_item' ng-repeat="val in messages">
-      <div>{{ val.time }} - <b>{{val.name}}</b>: {{ val.text }}</div>
+
+    <div class='chatArea' class="col-md-4">
+      <form ng-submit ='sendData()'>
+        <div> Enter Chat messages</div>
+        <textarea name="message" id="" ng-model='message' required></textarea>
+        <button type='submit'>Send</button>
+      </form>
+
+      <div class = 'row'>
+        <div ngf-drop ngf-select ng-model="files"
+          class="drop-box"
+          ngf-drag-over-class="'dragover'"
+          ngf-multiple="true" ngf-allow-dir="true"
+          accept="image/*,application/pdf"
+          ngf-pattern="'image/*,application/pdf'">
+            Drop pdfs or images here or click to upload
+        </div>
+      </div>
+
+      <div>Messages</div>
+      <textarea placeholder="No new messages" ng-model ='messages'>
+        <div class='message_item' ng-repeat="val in messages">
+          <div>{{ val.time }} - <b>{{val.name}}</b>: {{ val.text }}</div>
+        </div>
+      </textarea>
     </div>
+
   </body>
-</html>
