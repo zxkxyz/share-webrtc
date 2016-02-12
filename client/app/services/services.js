@@ -2,40 +2,30 @@ angular.module('forinlanguages.services', [])
 
 .factory('PeerFactory', function() {
 
-  var makePeer = function(user) {
-    user = new Peer({
+  var makePeer = function(cb) {
+    var newurl;
+    var newPeer = new Peer({
       key: '6ph8w4mjh1cq5mi'
     });
-    user.on('open', function(id) {
+    newPeer.on('open', function(id) {
       console.log("Opened with ID:", id);
+      newurl = "localhost:3000/p/" + id;
+      cb(newPeer, newurl);
     });
-    return user;
-  }
+  };
 
-  var handleConnection = function(c, peers, messages) {
-    if(peers[c.peer] !== undefined) {
-      return console.log("That person is already connected!");
-    }
-    console.log("Will connect")
+  var handleConnection = function(c, msgCb, peerCb) {
     c.on('data', function(data) {
-      messages.push(data);
-      console.log('received data', data);
-      console.log("messages:", messages);
+      msgCb(data);
       c.on('close', function() {
-        console.log('disconnected from person');
-        delete peers[c.peer];
+        peerCb(c, true);
       });
     });
-    peers[c.peer] = c;
-    console.log("peers", peers);
+    peerCb(c, false);
   }
 
-  var connectTo = function(person, peers, me) {
-    var c = me.connect(person, {
-      metadata: {
-        peers: peers
-      }
-    });
+  var connectTo = function(person, me) {
+    var c = me.connect(person);
     return c;
   };
 
