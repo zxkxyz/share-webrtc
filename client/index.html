@@ -1,1 +1,22 @@
-our peerjs index.html file
+<!DOCTYPE html>
+<html ng-app='forinlanguages'>
+  <head>
+    <meta charset="utf-8" />
+    <title>ForInLanguages</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+    <script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+    <script src="app/peer/peer.js"></script>
+    <script src="app/services/services.js"></script>
+    <script src="app/application.js"></script>
+  </head>
+  <body ng-controller="PeerController">
+    <h1>For-In Languages</h1>
+    <input type="text" name="input" ng-model="person">
+    <button ng-click="connectTo()">Connect</button>
+    <h3>My ID: {{ me.id }}</h3>
+    <h3>Peers:</h3>
+    <div class='person_item' ng-repeat="peer in peers">
+      <div>{{ peer.id }}</div>
+    </div>
+  </body>
+</html>
