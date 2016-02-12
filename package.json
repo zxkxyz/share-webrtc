@@ -1,10 +1,13 @@
 {
-  "name": "peerJS p2p",
+  "name": "peerJSp2p",
   "version": "0.0.0",
   "description": "our greenfield project peer 2 peer sharing",
   "dependencies": {
     "express": "~4.0.0",
     "morgan": "^1.6.1",
-    "ng-file-upload": "^11.2.3"
+    "ng-file-upload": "^11.2.3",
+    "body-parser": "^1.15.0",
+    "express": "~4.0.0",
+    "jade": "^1.11.0"
   }
 }
