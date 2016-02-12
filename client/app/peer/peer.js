@@ -5,6 +5,7 @@ angular.module('forinlanguages.peer', [])
   $scope.person = "";
   $scope.message = "";
   $scope.username = "";
+  $scope.url = "";
   $scope.me = {};
 
   // Object of connected peers and messages received/send
@@ -27,22 +28,53 @@ angular.module('forinlanguages.peer', [])
   // });
 
   // Init peer instance for user
-  PeerFactory.makePeer($scope.me, $scope);
+  PeerFactory.makePeer(function(newUser, url) {
+    $scope.me = newUser;
+    $scope.url = url;
+    $scope.$digest();
 
-  $scope.me.on('connection', function(c) {
-    PeerFactory.handleConnection(c, $scope.peers, $scope.messages, $scope);
-  });
+    $scope.me.on('connection', function(c) {
+    PeerFactory.handleConnection(c,
+      function(data) {
+        $scope.messages.push(data);
+        $scope.$digest();
+      },
+      function(conn, bool) {
+        if(bool) {
+          delete $scope.peers[conn.peer];
+          $scope.$digest();
+        } else {
+          $scope.peers[conn.peer] = conn;
+          $scope.$digest();
+        }
+      });
+    });
 
-  $scope.me.on('error', function(err) {
-    console.log("Some ERROR:", err);
+    $scope.me.on('error', function(err) {
+      console.log("Some ERROR:", err);
+    });
   });
 
   $scope.connectTo = function() {
-    var conn = PeerFactory.connectTo($scope.person, $scope.peers, $scope.me)
-    conn.on('open', function() {
-      PeerFactory.handleConnection(conn, $scope.peers, $scope.messages, $scope);
+    var c = PeerFactory.connectTo($scope.person, $scope.me)
+    c.on('open', function() {
+      PeerFactory.handleConnection(c,
+      function(data) {
+        $scope.messages.push(data);
+        $scope.$digest();
+      },
+      function(conn, bool) {
+        if(bool) {
+          delete $scope.peers[conn.peer];
+          $scope.$digest();
+        } else {
+          $scope.peers[conn.peer] = conn;
+          console.log($scope.peers);
+          $scope.$digest();
+        }
+      });
     });
-    conn.on('error', function(err) { alert(err); });
+    c.on('error', function(err) { alert(err); });
   }
 
   $scope.sendData = function() {
