@@ -14,21 +14,6 @@ angular.module('forinlanguages.peer', [])
   $scope.peers = {};
   $scope.messages = [];
 
-  // $scope.$watch('peers', function(newVal, oldVal) {
-  //   console.log('detected change in peers obj');
-  //   $scope.peers = $scope.peers;
-  // });
-
-  // $scope.$watch('messages', function(newVal, oldVal) {
-  //   console.log('detected change in messages array');
-  //   $scope.messages = $scope.messages;
-  // });
-
-  // $scope.$watch('me', function(newVal, oldVal) {
-  //   console.log('detected change in me object');
-  //   $scope.me = $scope.me;
-  // });
-
   // Init peer instance for user
   PeerFactory.makePeer(function(newUser, url) {
     $scope.me = newUser;
@@ -52,30 +37,26 @@ angular.module('forinlanguages.peer', [])
           $scope.peers[conn.peer] = conn;
           $scope.$digest();
         }
+      },
+      function(data) {
+        saveAs(data.rawdat, "itworks.txt");
+        alert("we just saved a file!!!!");
       });
     });
 
     $scope.me.on('error', function(err) {
       console.log("Some ERROR:", err);
     });
-
-    $scope.me.dataConnection.on('data', function(data) {
-      saveAs(data, 'itworks.png');
-    });
   });
 
   $scope.$watch('file', function (files) {
-    for(var x in $scope.peers) {
-      if($scope.peers[x].dataConnection.open) {
-        $scope.peers[x].dataConnection.send(files[0]);
-      }
-    }
+    $scope.sendData("file");
   });
 
   $scope.connectTo = function() {
-    var c = PeerFactory.connectTo($scope.person, $scope.me)
+    var c = PeerFactory.connectTo($scope.person, $scope.me);
     c.on('open', function() {
-      PeerFactory.handleConnection(c,
+          PeerFactory.handleConnection(c,
       function(data) {
         $scope.messages.push(data);
         $scope.$digest();
@@ -84,30 +65,53 @@ angular.module('forinlanguages.peer', [])
         if(bool) {
           delete $scope.peers[conn.peer];
           $scope.$digest();
+          alert("Person with ID " + conn.peer + " left the chat.");
         } else {
           $scope.peers[conn.peer] = conn;
-          console.log($scope.peers);
           $scope.$digest();
         }
+      },
+      function(data) {
+        saveAs(data.rawdat, "itworks.txt");
+        alert("we just saved a file!!!!");
       });
     });
     c.on('error', function(err) { alert(err); });
   }
 
-  $scope.sendData = function() {
+  $scope.sendData = function(type) {
     if(Object.keys($scope.peers).length === 0) {
       return alert("Can't send data to no users!");
     }
-    if($scope.username === "" || $scope.text === "") {
-      return alert("can't use an empty name or textbox");
+    if($scope.username === "") {
+      return alert("can't use an empty name");
     }
-    var dataToSend = {
-      text: $scope.message,
-      time: moment().format('h:mm:ss a'),
-      name: $scope.username
-    };
-    $scope.messages.push(dataToSend);
-    PeerFactory.sendData(dataToSend, $scope.peers);
+    if(type === "message") {
+      if($scope.message === "") {
+        return alert("can't use no text")
+      }
+      var dataToSend = {
+        rawdat: $scope.message,
+        time: moment().format('h:mm:ss a'),
+        name: $scope.username,
+        type: 'message'
+      };
+      $scope.messages.push(dataToSend);
+      PeerFactory.sendData(dataToSend, $scope.peers);
+    } else if (type === "file") {
+      if($scope.file.length === 0 || $scope.file.length > 1) {
+        return alert("no file or too many files, only one file supported at this time");
+      }
+      var dataToSend = {
+        rawdat: $scope.file[0],
+        time: moment().format('h:mm:ss a'),
+        name: $scope.username,
+        type: 'file'
+      }
+      PeerFactory.sendData(dataToSend, $scope.peers);
+    } else {
+      alert("you screwed up")
+    }
   };
 
   $window.onunload = $window.onbeforeunload = function(e) {

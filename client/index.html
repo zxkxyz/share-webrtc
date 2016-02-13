@@ -13,6 +13,7 @@
     <script src="lib/angular-file-model/angular-file-model.js"></script>
     <script src="lib/peerjs/peer.min.js"></script>
     <script src="lib/moment/min/moment.min.js"></script>
+    <script src="lib/filesaver/FileSaver.min.js"></script>
 
     <script src="app/peer/peer.js"></script>
     <script src="app/file/file.js"></script>
@@ -39,20 +40,20 @@
       </div>
     <h3>Messages:</h3>
     <div class='chatArea' class="col-md-4">
-      <form ng-submit ='sendData()'>
+      <form ng-submit ='sendData("message")'>
         <div> Enter Chat messages</div>
         <textarea name="message" id="" ng-model='message' required></textarea>
         <button type='submit'>Send</button>
       </form>
 
-      <div class='row' ng-controller="FileController">
+      <div class='row'>
         <input type="file" value="choosefile" file-model='file' multiple>
       </div>
 
       <div>Messages</div>
       <div placeholder="No new messages" ng-model ='messages'>
         <div class='message_item' ng-repeat="val in messages">
-          <div>{{ val.time }} - <b>{{val.name}}</b>: {{ val.text }}</div>
+          <div>{{ val.time }} - <b>{{val.name}}</b>: {{ val.rawdat }}</div>
         </div>
       </div>
     </div>

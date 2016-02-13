@@ -14,15 +14,24 @@ angular.module('forinlanguages.services', [])
     });
   };
 
-  var handleConnection = function(c, msgCb, peerCb) {
+  var handleConnection = function(c, msgCb, peerCb, dataCb) {
+    console.log("connection:", c);
     c.on('data', function(data) {
-      msgCb(data);
+      console.log("data:", data);
+      if(data.type === "message") {
+        msgCb(data);
+      } else if(data.type === "file") {
+        console.log("it's a file!");
+        dataCb(data);
+      } else {
+        console.log("something happened");
+      }
       c.on('close', function() {
         peerCb(c, true);
       });
     });
     peerCb(c, false);
-  }
+  };
 
   var connectTo = function(person, me) {
     var c = me.connect(person);
@@ -33,7 +42,7 @@ angular.module('forinlanguages.services', [])
     for(var x in peers) {
       peers[x].send(data);
     }
-  }
+  };
 
   return {
     makePeer: makePeer,
@@ -44,7 +53,6 @@ angular.module('forinlanguages.services', [])
 })
 
 .factory('FileFactory', function() {
-
   return {
   }
 })
