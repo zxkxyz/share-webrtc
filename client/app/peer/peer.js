@@ -12,6 +12,7 @@ angular.module('forinlanguages.peer', [])
   $scope.peers = {};
   $scope.messages = [];
   $scope.files = [];
+  $scope.fileQueue = [];
 
   // Init peer instance for user
   PeerFactory.makePeer(function(newUser, id) {
@@ -86,18 +87,17 @@ angular.module('forinlanguages.peer', [])
       PeerFactory.sendData(dataToSend, $scope.peers);
       $scope.messages.push("" + dataToSend.time + " - " + dataToSend.name + ": " + dataToSend.rawdat);
     } else if (type === "file") {
-      if($scope.file.length === 0 || $scope.file.length > 1) {
-        return alert("no file or too many files, only one file supported at this time");
-      }
       console.log($scope.file);
-      var dataToSend = {
-        rawdat: $scope.file[0],
-        time: moment().format('h:mm:ss a'),
-        name: $scope.username || "anonymous",
-        filename: $scope.file[0].name,
-        type: 'file'
+      for(var x = 0; x < $scope.file.length; x++) {
+        var dataToSend = {
+          rawdat: $scope.file[x],
+          time: moment().format('h:mm:ss a'),
+          name: $scope.username || "anonymous",
+          filename: $scope.file[x].name,
+          type: 'file'
+        }
+        PeerFactory.sendData(dataToSend, $scope.peers);
       }
-      PeerFactory.sendData(dataToSend, $scope.peers);
     } else {
       alert("you screwed up");
     }
