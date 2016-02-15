@@ -9,8 +9,7 @@ angular.module('forinlanguages.services', [])
     });
     newPeer.on('open', function(id) {
       console.log("Opened with ID:", id);
-      newurl = "localhost:3000/p/" + id;
-      cb(newPeer, newurl);
+      cb(newPeer, id);
     });
   };
 
@@ -27,10 +26,10 @@ angular.module('forinlanguages.services', [])
         console.log("something happened");
       }
       c.on('close', function() {
-        peerCb(c, true);
+        peerCb(c);
       });
     });
-    peerCb(c, false);
+    peerCb(c);
   };
 
   var connectTo = function(person, me) {
@@ -49,10 +48,5 @@ angular.module('forinlanguages.services', [])
     handleConnection: handleConnection,
     connectTo: connectTo,
     sendData: sendData
-  }
-})
-
-.factory('FileFactory', function() {
-  return {
   }
 })
