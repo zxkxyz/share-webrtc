@@ -1,8 +1,6 @@
 angular.module('forinlanguages.peer', [])
 
 .controller('PeerController', function($scope, $window, $location, PeerFactory) {
-  // Init file input
-  $scope.file = null;
   // Init input models
   $scope.person = "";
   $scope.message = "";
@@ -56,10 +54,6 @@ angular.module('forinlanguages.peer', [])
     $scope.me.on('error', function(err) {
       console.log("Some ERROR:", err);
     });
-  });
-
-  $scope.$watch('file', function (files) {
-    $scope.sendData("file");
   });
 
   $scope.connectTo = function() {
@@ -138,4 +132,11 @@ angular.module('forinlanguages.peer', [])
       $scope.me.destroy();
     }
   };
+
+  $scope.$watch('file', function (files, old) {
+    if(files !== old) {
+      $scope.sendData("file");
+    }
+  });
+
 })
