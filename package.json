@@ -3,14 +3,15 @@
   "version": "0.0.0",
   "description": "our greenfield project peer 2 peer sharing",
   "dependencies": {
-    "express": "~4.0.0",
-    "morgan": "^1.6.1",
-    "ng-file-upload": "^11.2.3",
     "body-parser": "^1.15.0",
+    "bower": "^1.7.7",
     "express": "~4.0.0",
-    "jade": "^1.11.0"
+    "jade": "^1.11.0",
+    "morgan": "^1.6.1",
+    "ng-file-upload": "^11.2.3"
   },
   "scripts": {
-    "start": "node server/app.js"
+    "start": "node server/app.js",
+    "postinstall": "./node_modules/bower/bin/bower install"
   }
 }
