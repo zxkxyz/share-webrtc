@@ -41,11 +41,15 @@ angular.module('forinlanguages.peer', [])
       },
       function(data) {
         console.log("data in the callback:", data);
-        var arr = new Uint8Array(data);
+        var arr = new Uint8Array(data.rawdat);
+        console.log("Uintarr", arr);
         var blob = new Blob([arr]);
         var blobUrl = window.URL.createObjectURL(blob);
         $scope.files.push(blobUrl);
         $scope.$digest();
+        saveAs(blob, "cool.txt");
+        // var myFile = new File([arr], "idk.txt");
+        // console.log('myfile', myFile);
       });
     });
 
@@ -78,13 +82,15 @@ angular.module('forinlanguages.peer', [])
       },
       function(data) {
         console.log("data in the callback:", data);
-        var arr = new Uint8Array(data);
+        var arr = new Uint8Array(data.rawdat);
+        console.log("Uintarr", arr);
         var blob = new Blob([arr]);
         var blobUrl = window.URL.createObjectURL(blob);
         $scope.fileUrl = blobUrl;
         $scope.$digest();
-        var myFile = new File([arr], "idk.txt");
-        console.log('myfile', myFile);
+        saveAs(blob, "cool.txt");
+        // var myFile = new File([arr], "idk.txt");
+        // console.log('myfile', myFile);
       });
     });
     c.on('error', function(err) { alert(err); });

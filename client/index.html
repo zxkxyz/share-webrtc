@@ -35,7 +35,7 @@
     <h3>Downloads:</h3>
     <div placeholder="No new downloads" ng-model ='files'>
       <div class='message_item' ng-repeat="val in files">
-        <div>{{ val }}</div>
+        <a href="{{val}}">{{ val }}</a>
       </div>
     </div>
     <h3>Peers:</h3>
