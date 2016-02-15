@@ -1,7 +1,6 @@
 angular.module('forinlanguages', [
   'file-model',
   'forinlanguages.services',
-  'forinlanguages.peer',
-  'forinlanguages.file'
+  'forinlanguages.peer'
 ])
 // Main app stuff here
