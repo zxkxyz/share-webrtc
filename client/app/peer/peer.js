@@ -13,6 +13,7 @@ angular.module('forinlanguages.peer', [])
   // Object of connected peers and messages received/send
   $scope.peers = {};
   $scope.messages = [];
+  $scope.files = [];
 
   // Init peer instance for user
   PeerFactory.makePeer(function(newUser, url) {
@@ -39,8 +40,12 @@ angular.module('forinlanguages.peer', [])
         }
       },
       function(data) {
-        saveAs(data.rawdat, "itworks.txt");
-        alert("we just saved a file!!!!");
+        console.log("data in the callback:", data);
+        var arr = new Uint8Array(data);
+        var blob = new Blob([arr]);
+        var blobUrl = window.URL.createObjectURL(blob);
+        $scope.files.push(blobUrl);
+        $scope.$digest();
       });
     });
 
@@ -72,8 +77,14 @@ angular.module('forinlanguages.peer', [])
         }
       },
       function(data) {
-        saveAs(data.rawdat, "itworks.txt");
-        alert("we just saved a file!!!!");
+        console.log("data in the callback:", data);
+        var arr = new Uint8Array(data);
+        var blob = new Blob([arr]);
+        var blobUrl = window.URL.createObjectURL(blob);
+        $scope.fileUrl = blobUrl;
+        $scope.$digest();
+        var myFile = new File([arr], "idk.txt");
+        console.log('myfile', myFile);
       });
     });
     c.on('error', function(err) { alert(err); });

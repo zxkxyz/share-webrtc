@@ -32,6 +32,12 @@
 
     <h3>My ID: {{ me.id }}</h3>
     <h3>Your URL: {{ url }}</h3>
+    <h3>Downloads:</h3>
+    <div placeholder="No new downloads" ng-model ='files'>
+      <div class='message_item' ng-repeat="val in files">
+        <div>{{ val }}</div>
+      </div>
+    </div>
     <h3>Peers:</h3>
       <div placeholder="No new messages" ng-model ='peers'>
         <div class='peer_item' ng-repeat="val in peers">
