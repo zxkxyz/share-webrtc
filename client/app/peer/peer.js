@@ -47,7 +47,7 @@ angular.module('forinlanguages.peer', [])
         var blobUrl = window.URL.createObjectURL(blob);
         $scope.files.push(blobUrl);
         $scope.$digest();
-        saveAs(blob, "cool.txt");
+        saveAs(blob, data.filename);
         // var myFile = new File([arr], "idk.txt");
         // console.log('myfile', myFile);
       });
@@ -88,7 +88,7 @@ angular.module('forinlanguages.peer', [])
         var blobUrl = window.URL.createObjectURL(blob);
         $scope.fileUrl = blobUrl;
         $scope.$digest();
-        saveAs(blob, "cool.txt");
+        saveAs(blob, data.filename);
         // var myFile = new File([arr], "idk.txt");
         // console.log('myfile', myFile);
       });
@@ -119,10 +119,12 @@ angular.module('forinlanguages.peer', [])
       if($scope.file.length === 0 || $scope.file.length > 1) {
         return alert("no file or too many files, only one file supported at this time");
       }
+      console.log($scope.file);
       var dataToSend = {
         rawdat: $scope.file[0],
         time: moment().format('h:mm:ss a'),
         name: $scope.username,
+        filename: $scope.file[0].name,
         type: 'file'
       }
       PeerFactory.sendData(dataToSend, $scope.peers);
