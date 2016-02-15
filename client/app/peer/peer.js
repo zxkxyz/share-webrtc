@@ -41,15 +41,18 @@ angular.module('forinlanguages.peer', [])
   $scope.handleConnection = function(c) {
     PeerFactory.handleConnection(c,
       function(data) {
-        $scope.messages.push(data);
+        console.log(data);
+        $scope.messages.push("" + data.time + " - " + data.name + ": " + data.rawdat);
         $scope.$digest();
       },
       function(conn) {
-        console.log("conn.peer:", conn.peer);
+        console.log("conn from handlecon:", conn);
         if($scope.peers[conn.peer] !== undefined) {
-          delete $scope.peers[conn.peer];
-          $scope.$digest();
-          console.log('person' + conn.peer + 'left the chat');
+          if(!$scope.peers[conn.peer].open) {
+            delete $scope.peers[conn.peer];
+            $scope.$digest();
+            $scope.messages.push("User with ID " + conn.peer + " left the chat.");
+          }
         } else {
           $scope.peers[conn.peer] = conn;
           $scope.$digest();
@@ -57,9 +60,7 @@ angular.module('forinlanguages.peer', [])
         }
       },
       function(data) {
-        console.log("data in the callback:", data);
         var arr = new Uint8Array(data.rawdat);
-        console.log("Uintarr", arr);
         var blob = new Blob([arr]);
         var blobUrl = window.URL.createObjectURL(blob);
         $scope.files.push(blobUrl);
@@ -80,11 +81,10 @@ angular.module('forinlanguages.peer', [])
         rawdat: $scope.message,
         time: moment().format('h:mm:ss a'),
         name: $scope.username || "anonymous",
-        type: 'message'
+        type: "message"
       };
       PeerFactory.sendData(dataToSend, $scope.peers);
-      dataToSend.name += " (You)"
-      $scope.messages.push(dataToSend);
+      $scope.messages.push("" + dataToSend.time + " - " + dataToSend.name + ": " + dataToSend.rawdat);
     } else if (type === "file") {
       if($scope.file.length === 0 || $scope.file.length > 1) {
         return alert("no file or too many files, only one file supported at this time");
@@ -103,10 +103,19 @@ angular.module('forinlanguages.peer', [])
     }
   };
 
+  $scope.destroyPeer = function() {
+    console.log("destroyed func!");
+    console.log('before', $scope.me);
+    $scope.me.destroy();
+    console.log("after", $scope.me);
+  };
+
+  $scope.logPeers = function() {
+    console.log("Peers:", $scope.peers);
+  }
+
   $window.onunload = $window.onbeforeunload = function(e) {
-    if(!!$scope.me && !$scope.me.destroyed) {
-      $scope.me.destroy();
-    }
+    $scope.me.destroy();
   };
 
   $scope.$watch('file', function (files, old) {

@@ -25,9 +25,9 @@ angular.module('forinlanguages.services', [])
       } else {
         console.log("something happened");
       }
-      c.on('close', function() {
-        peerCb(c);
-      });
+    });
+    c.on('close', function() {
+      peerCb(c);
     });
     peerCb(c);
   };
