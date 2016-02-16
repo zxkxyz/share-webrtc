@@ -76,7 +76,7 @@ angular.module('forinlanguages.peer', [])
     }
     if(type === "message") {
       if($scope.message === "") {
-        return alert("can't use no text")
+        return alert("can't use no text");
       }
       var dataToSend = {
         rawdat: $scope.message,
