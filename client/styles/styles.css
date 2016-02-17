@@ -3,6 +3,13 @@ textarea {
 
 }
 
+.messageBoard {
+    height: 400px;
+    width: 300px;
+    color:blue;
+    overflow-y: auto;
+}
+
 .drop-box {
     background: #F8F8F8;
     border: 5px dashed #DDD;

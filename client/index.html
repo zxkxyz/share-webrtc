@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" type="text/css" href="styles/styles.css" />
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel='stylesheet' href="lib/semantic/dist/semantic.min.css"/>
 
     <script src="lib/angular/angular.min.js"></script>
     <script src="lib/angular-file-model/angular-file-model.js"></script>
@@ -17,14 +18,18 @@
     <script src="lib/localforage/dist/localforage.min.js"></script>
     <script src="lib/angular-localforage/dist/angular-localForage.min.js"></script>
     <script src="lib/underscore/underscore-min.js"></script>
+    <script src="lib/filesaver/FileSaver.min.js"></script>
+    <script src="lib/jquery/dist/jquery.min.js"></script>
+    <script src="lib/semantic/dist/semantic.min.js"></script>
 
     <script src="app/peer/peer.js"></script>
     <script src="app/services/services.js"></script>
     <script src="app/application.js"></script>
   </head>
-  <body ng-controller="PeerController">
-    <h1>For-In Languages</h1>
 
+  <body ng-controller="PeerController" class = "container">
+    <h1>For-In Languages</h1/>
+    
     <label for="input">Username:</label>
     <input type="text" name="username" ng-model="username">
 
@@ -38,7 +43,7 @@
     <button ng-click="clearLocalForage()">Clear localForage</button>
 
 
-    <h3>My ID: {{ me.id }}</h3>
+    <h3>My ID: {{ me.id }}</h3>/
     <a href="{{url}}">Your URL</a>
     <h3>Downloads:</h3>
     <div placeholder="No new downloads" ng-model ='files'>
@@ -65,9 +70,25 @@
       </div>
 
       <div>Messages</div>
-      <div placeholder="No new messages" ng-model ='messages'>
-        <div class='message_item' ng-repeat="val in messages track by $index">
-          <div>{{ val }}</div>
+      <div class= "messageBoard ui feed">
+        <div  placeholder="No new messages" ng-model ='messages'>
+          <div class='message_item' ng-repeat="val in messages track by $index">
+            <div class="event">
+              <div class="label">
+              <img class="ui avatar image" src="https://upload.wikimedia.org/wikipedia/commons/3/33/Vanamo_Logo.png">
+              <a class="user">{{ val.name }}</a>
+              </div>
+              <div class="content">
+                
+                  
+                  {{ val.rawdat }}
+                  <div class="date">{{ val.time }}</div>
+                  
+                
+              </div>
+
+            </div> <!--envent closing tag -->
+          </div>
         </div>
       </div>
     </div>

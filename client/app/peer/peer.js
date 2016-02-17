@@ -46,15 +46,16 @@ angular.module('forinlanguages.peer', [])
   $scope.handleConnection = function(c) {
     PeerFactory.handleConnection(c,
       function(data) {
-        $scope.messages.push("" + data.time + " - " + data.name + ": " + data.rawdat);
+        console.log(data);
+        $scope.messages.push(data);
         $scope.$digest();
       },
       function(conn) {
         if($scope.peers[conn.peer] !== undefined) {
           if(!$scope.peers[conn.peer].open) {
             delete $scope.peers[conn.peer];
+            $scope.messages.push({rawdat: "User with ID " + conn.peer + " left the chat."});
             $scope.$digest();
-            $scope.messages.push("User with ID " + conn.peer + " left the chat.");
           }
         } else {
           $scope.peers[conn.peer] = conn;
@@ -120,7 +121,7 @@ angular.module('forinlanguages.peer', [])
         type: "message"
       };
       PeerFactory.sendData(dataToSend, $scope.peers);
-      $scope.messages.push("" + dataToSend.time + " - " + dataToSend.name + ": " + dataToSend.rawdat);
+      $scope.messages.push(dataToSend);
     } else if (type === "file") {
       for(var x = 0; x < $scope.file.length; x++) {
         if($scope.file.size < (5 * 1000 * 1000)) {
@@ -167,7 +168,7 @@ angular.module('forinlanguages.peer', [])
 
   $scope.destroyPeer = function() {
     console.log("destroyed func!");
-    console.log('before', $scope.me);
+    console.log('before', $scope.me); 
     $scope.me.destroy();
     console.log("after", $scope.me);
   };
