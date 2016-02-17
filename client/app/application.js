@@ -1,6 +1,9 @@
 angular.module('forinlanguages', [
   'file-model',
+  'LocalForageModule',
   'forinlanguages.services',
   'forinlanguages.peer'
 ])
-// Main app stuff here
+.config(['$localForageProvider', function($localForageProvider){
+  $localForageProvider.setNotify(true, true); // itemSet, itemRemove
+}]);

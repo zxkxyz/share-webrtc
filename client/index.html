@@ -13,7 +13,10 @@
     <script src="lib/angular-file-model/angular-file-model.js"></script>
     <script src="lib/peerjs/peer.min.js"></script>
     <script src="lib/moment/min/moment.min.js"></script>
-    <script src="lib/filesaver/FileSaver.min.js"></script>
+    <script src="lib/file-saver.js/FileSaver.js"></script>
+    <script src="lib/localforage/dist/localforage.min.js"></script>
+    <script src="lib/angular-localforage/dist/angular-localForage.min.js"></script>
+    <script src="lib/underscore/underscore-min.js"></script>
 
     <script src="app/peer/peer.js"></script>
     <script src="app/services/services.js"></script>
@@ -30,6 +33,8 @@
     <button ng-click="connectTo()">Connect</button>
     <button ng-click="destroyPeer()">Disconnect</button>
     <button ng-click="logPeers()">Log peers</button>
+    <button ng-click="logMe()">Log me</button>
+    <button ng-click="logLocalForage()">Log localForage</button>
 
 
     <h3>My ID: {{ me.id }}</h3>
