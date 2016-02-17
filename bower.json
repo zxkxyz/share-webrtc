@@ -23,8 +23,10 @@
     "moment": "momentjs#^2.11.2",
     "peerjs": "^0.3.14",
     "angular-file-model": "^0.3.1",
-    "filesaver": "*",
-    "FileSaver": "https://github.com/Teleborder/FileSaver.js",
-    "jszip": "Stuk/jszip#^2.5.0"
+    "jszip": "Stuk/jszip#^2.5.0",
+    "file-saver.js": "^1.20150507.2",
+    "localforage": "^1.4.0",
+    "angular-localforage": "^1.2.5",
+    "underscore": "^1.8.3"
   }
 }
