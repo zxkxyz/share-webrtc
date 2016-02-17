@@ -28,22 +28,30 @@
   </head>
 
   <body ng-controller="PeerController" class = "container">
-    <h1>For-In Languages</h1/>
+    <div class ="ui two column doubling stackable grid container">
     
+    <div class ="column">
+    <h1 class ="ui header">
+      <i class ="lab icon"></i>
+      <div class = "content">For-In Languages</div>
+    </h1>
     <label for="input">Username:</label>
-    <input type="text" name="username" ng-model="username">
+      <input type="text" name="username" ng-model="username">
+
 
     <label for="input">Peer:</label>
     <input type="text" name="input" ng-model="person">
     <button ng-click="connectTo()">Connect</button>
-    <button ng-click="destroyPeer()">Disconnect</button>
+    <!-- <button ng-click="destroyPeer()">Disconnect</button>
     <button ng-click="logPeers()">Log peers</button>
     <button ng-click="logMe()">Log me</button>
     <button ng-click="logLocalForage()">Log localForage</button>
-    <button ng-click="clearLocalForage()">Clear localForage</button>
+    <button ng-click="clearLocalForage()">Clear localForage</button> -->
+
+      
 
 
-    <h3>My ID: {{ me.id }}</h3>/
+      <h3>My ID: {{ me.id }}</h3>/
     <a href="{{url}}">Your URL</a>
     <h3>Downloads:</h3>
     <div placeholder="No new downloads" ng-model ='files'>
@@ -57,19 +65,28 @@
           <div>{{ val.peer }}</div>
         </div>
       </div>
-    <h3>Messages:</h3>
-    <div class='chatArea' class="col-md-4">
+      <h3>Share files</h3>
+      <input type="file" value="choosefile" file-model='file' multiple>
+    </div>
+   <!--  <button ng-click="destroyPeer()">Disconnect</button>
+    <button ng-click="logPeers()">Log peers</button> -->
+    <div class = "column">
+      <h3 class ="ui header">
+        <i class = "comments icon"></i>
+        <div class="content">Chat Room:</div>
+      </h3>
+    <div class='chatArea'>
       <form ng-submit ='sendData("message")'>
         <div> Enter Chat messages</div>
-        <textarea name="message" id="" ng-model='message' required></textarea>
+        <textarea name="message" id="textInput" ng-model='message' required></textarea>
         <button type='submit'>Send</button>
       </form>
 
-      <div class='row'>
-        <input type="file" value="choosefile" file-model='file' multiple>
-      </div>
+      
+      
+      
 
-      <div>Messages</div>
+      <h3>Messages</h3>
       <div class= "messageBoard ui feed">
         <div  placeholder="No new messages" ng-model ='messages'>
           <div class='message_item' ng-repeat="val in messages track by $index">
@@ -92,4 +109,8 @@
         </div>
       </div>
     </div>
+    
+    </div>
+    
+  </div>
   </body>

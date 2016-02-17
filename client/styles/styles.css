@@ -5,9 +5,14 @@ textarea {
 
 .messageBoard {
     height: 400px;
-    width: 300px;
+    width: 100%;
     color:blue;
+    word-wrap: break-word;
     overflow-y: auto;
+}
+
+#textInput {
+    width: 100%;
 }
 
 .drop-box {
