@@ -137,52 +137,54 @@ angular.module('forinlanguages.peer', [])
       PeerFactory.sendData(dataToSend, $scope.peers);
       $scope.messages.push("" + dataToSend.time + " - " + dataToSend.name + ": " + dataToSend.rawdat);
     } else if (type === "file") {
-      console.log("File selected:", $scope.file[0]);
-      if($scope.file.size < (5 * 1000 * 1000)) {
-        return PeerFactory.sendData($scope.file[0], $scope.peers);
-      }
-      // Both assigns metadata required later and does the chunking
-      var bool = false, want = 0;
-      PeerFactory.chunker($scope.file[0], function(dat, meta) {
-        console.log("chunker returned", dat);
-        var order = dat.order;
-        if(dat.type === "file-chunk-last") {
-          order = dat.order + "-LAST";
+      for(var x = 0; x < $scope.file.length; x++) {
+        console.log("File selected:", $scope.file[x]);
+        if($scope.file.size < (5 * 1000 * 1000)) {
+          return PeerFactory.sendData($scope.file[x], $scope.peers);
         }
-        $localForage.setItem(order, dat.data).then(function() {
-          // Only start checking once we reach the last file chunk, it's a-sync so we have to set up the bool just in case
-          // we get the last file chunk right before adding another chunk if that makes any sense lololol
+        // Both assigns metadata required later and does the chunking
+        var bool = false, want = 0;
+        PeerFactory.chunker($scope.file[x], function(dat, meta) {
+          console.log("chunker returned", dat);
+          var order = dat.order;
           if(dat.type === "file-chunk-last") {
-            console.log("landed on last chunk")
-            bool = true;
-            want = dat.order;
+            order = dat.order + "-LAST";
           }
-          var have = 0;
-          console.log('testing bool', bool);
-          if(bool) {
-            $localForage.iterate(function(val,key) {
-              console.log("outer key", key);
-              console.log("ITERATING OVER:", val);
-              have++;
-            }).then(function() {
-              console.log("have", have);
-              console.log("Want", want);
-              if((have-1) === want) {
-                $localForage.iterate(function(val,key) {
-                  if(key.indexOf("LAST") !== -1) {
-                    PeerFactory.sendData({name: meta.name, order: key.slice(0, key.indexOf("-LAST")), data: val, type: "file-chunk-last"}, $scope.peers);
-                  } else {
-                    PeerFactory.sendData({name: meta.name, order: key, data: val, type: "file-chunk"}, $scope.peers);
-                  }
-                });
-              }
-            })
-          }
+          $localForage.setItem(order, dat.data).then(function() {
+            // Only start checking once we reach the last file chunk, it's a-sync so we have to set up the bool just in case
+            // we get the last file chunk right before adding another chunk if that makes any sense lololol
+            if(dat.type === "file-chunk-last") {
+              console.log("landed on last chunk")
+              bool = true;
+              want = dat.order;
+            }
+            var have = 0;
+            console.log('testing bool', bool);
+            if(bool) {
+              $localForage.iterate(function(val,key) {
+                console.log("outer key", key);
+                console.log("ITERATING OVER:", val);
+                have++;
+              }).then(function() {
+                console.log("have", have);
+                console.log("Want", want);
+                if((have-1) === want) {
+                  $localForage.iterate(function(val,key) {
+                    if(key.indexOf("LAST") !== -1) {
+                      PeerFactory.sendData({name: meta.name, order: key.slice(0, key.indexOf("-LAST")), data: val, type: "file-chunk-last"}, $scope.peers);
+                    } else {
+                      PeerFactory.sendData({name: meta.name, order: key, data: val, type: "file-chunk"}, $scope.peers);
+                    }
+                  });
+                }
+              })
+            }
+          });
         });
-      });
-      $localForage.clear(function() {
-        console.log("Cleared local forage");
-      });
+        $localForage.clear(function() {
+          console.log("Cleared local forage");
+        });
+      }
     } else {
       alert("you screwed up");
     }
