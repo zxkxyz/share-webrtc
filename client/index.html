@@ -5,11 +5,9 @@
     <title>For-In Languages</title>
     <meta name="description" content="P2P Filesharing">
     <meta name="author" content="For-In Languages">
-
     <link rel="stylesheet" type="text/css" href="styles/styles.css" />
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css" />
     <link rel='stylesheet' href="lib/semantic/dist/semantic.min.css"/>
-
     <script src="lib/angular/angular.min.js"></script>
     <script src="lib/angular-file-model/angular-file-model.js"></script>
     <script src="lib/peerjs/peer.min.js"></script>
@@ -21,12 +19,10 @@
     <script src="lib/filesaver/FileSaver.min.js"></script>
     <script src="lib/jquery/dist/jquery.min.js"></script>
     <script src="lib/semantic/dist/semantic.min.js"></script>
-
     <script src="app/peer/peer.js"></script>
     <script src="app/services/services.js"></script>
     <script src="app/application.js"></script>
   </head>
-
   <body ng-controller="PeerController" class = "container">
     <div class ="ui two column doubling stackable grid container">
     
@@ -66,55 +62,54 @@
       <div placeholder="No new messages" ng-model ='peers'>
         <div class='peer_item' ng-repeat="val in peers">
           <div>{{ val.peer }}</div>
+
         </div>
+        <h3>Share files</h3>
+        <input type="file" value="choosefile" file-model='file' multiple>
+        
+        
       </div>
-      <h3>Share files</h3>
-      <input type="file" value="choosefile" file-model='file' multiple>
-    </div>
-   <!--  <button ng-click="destroyPeer()">Disconnect</button>
-    <button ng-click="logPeers()">Log peers</button> -->
-    <div class = "column">
-      <h3 class ="ui header">
+      <!--  <button ng-click="destroyPeer()">Disconnect</button>
+      <button ng-click="logPeers()">Log peers</button> -->
+      <div class = "column">
+        <h3 class ="ui header">
         <i class = "comments icon"></i>
         <div class="content">Chat Room:</div>
-      </h3>
-    <div class='chatArea'>
-      <form ng-submit ='sendData("message")'>
-        <div> Enter Chat messages</div>
-        <textarea name="message" id="textInput" ng-model='message' ng-keypress="isEnter($event,sendData,['message'])" required></textarea>
-        <div>{{ test }} </div>
-        <button type='submit'>Send</button>
-      </form>
-
-      
-      
-      
-
-      <h3>Messages</h3>
-      <div class= "messageBoard ui feed">
-        <div  placeholder="No new messages" ng-model ='messages'>
-          <div class='message_item' ng-repeat="val in messages track by $index">
-            <div class="event">
-              <div class="label">
-              <img class="ui avatar image" src="https://upload.wikimedia.org/wikipedia/commons/3/33/Vanamo_Logo.png">
-              <a class="user">{{ val.name }}</a>
+        </h3>
+        <div class='chatArea'>
+          <form ng-submit ='sendData("message")'>
+            <div> Enter Chat messages</div>
+            <textarea name="message" id="textInput" ng-model='message' ng-keypress="isEnter($event,sendData,['message'])" required></textarea>
+            <div>{{ test }} </div>
+            <button type='submit'>Send</button>
+          </form>
+          
+          
+          
+          <h3>Messages</h3>
+          <div class= "messageBoard ui feed">
+            <div  placeholder="No new messages" ng-model ='messages'>
+              <div class='message_item' ng-repeat="val in messages track by $index">
+                <div class="event">
+                  <div class="label">
+                    <img class="ui avatar image" src="https://upload.wikimedia.org/wikipedia/commons/3/33/Vanamo_Logo.png">
+                    <a class="user">{{ val.name }}</a>
+                  </div>
+                  <div class="content">
+                    
+                    
+                    {{ val.rawdat }}
+                    <div class="date">{{ val.time }}</div>
+                    
+                    
+                  </div>
+                  </div> <!--envent closing tag -->
+                </div>
               </div>
-              <div class="content">
-                
-                  
-                  {{ val.rawdat }}
-                  <div class="date">{{ val.time }}</div>
-                  
-                
-              </div>
-
-            </div> <!--envent closing tag -->
+            </div>
           </div>
+          
         </div>
+        
       </div>
-    </div>
-    
-    </div>
-    
-  </div>
-  </body>
+    </body>
