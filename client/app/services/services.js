@@ -1,6 +1,6 @@
 angular.module('forinlanguages.services', [])
 
-.factory('PeerFactory', function() {
+.factory('PeerFactory', function($localForage) {
 
   var makePeer = function(cb) {
     var newurl;
@@ -16,18 +16,14 @@ angular.module('forinlanguages.services', [])
   var handleConnection = function(c, msgCb, peerCb, dataCb) {
     console.log("connection:", c);
     c.on('data', function(data) {
-      console.log("data:", data);
       if(data.type === "message") {
         msgCb(data);
       } else if(data.type === "file") {
-        console.log("it's a file!");
         dataCb(data);
-      } else if(data.type === "file-chunk") {
-        dataCb(data);
-      } else if(data.type === "file-chunk-last") {
+      } else if(data.type === "file-chunk" || data.type === "file-chunk-last") {
         dataCb(data);
       } else {
-        console.log("something happened", data);
+        console.log("invalid data type", data);
       }
     });
     c.on('close', function() {
@@ -49,7 +45,7 @@ angular.module('forinlanguages.services', [])
   };
 
   var chunker = function(data, cb) {
-    var chunkSize = 5 * 1000 * 1000;
+    var chunkSize = 16 * 1000 * 1000;
     var meta = {
       totalChunks: Math.ceil(data.size/chunkSize),
       name: data.name,
