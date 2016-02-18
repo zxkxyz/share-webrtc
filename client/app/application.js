@@ -4,6 +4,16 @@ angular.module('forinlanguages', [
   'forinlanguages.services',
   'forinlanguages.peer'
 ])
-.config(['$localForageProvider', function($localForageProvider){
-  $localForageProvider.setNotify(true, true); // itemSet, itemRemove
-}]);
+
+
+
+// .config(function($routeProvider,$httpProvider){
+//     $routeProvider
+//     .when('/', {
+//         templateUrl: 'index.html',
+//         controller : 'PeerController'
+//     })
+// })
+// Main app stuff here
+
+
