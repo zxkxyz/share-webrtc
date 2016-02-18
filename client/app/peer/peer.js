@@ -40,15 +40,16 @@ angular.module('forinlanguages.peer', [])
     c.on('error', function(err) { alert(err); });
   }
 
+  // This needs to be outside the callback scope
+  var bool = false, want = -2;
+  var meta = {};
   $scope.handleConnection = function(c) {
     PeerFactory.handleConnection(c,
       function(data) {
-        console.log(data);
         $scope.messages.push("" + data.time + " - " + data.name + ": " + data.rawdat);
         $scope.$digest();
       },
       function(conn) {
-        console.log("conn from handlecon:", conn);
         if($scope.peers[conn.peer] !== undefined) {
           if(!$scope.peers[conn.peer].open) {
             delete $scope.peers[conn.peer];
@@ -58,12 +59,9 @@ angular.module('forinlanguages.peer', [])
         } else {
           $scope.peers[conn.peer] = conn;
           $scope.$digest();
-          console.log('added new person to the chat')
         }
       },
       function(data) {
-        var bool = false;
-        console.log("The data I get", data);
         if(data.type === "file") {
           var arr = new Uint8Array(data.rawdat);
           var blob = new Blob([arr]);
@@ -72,46 +70,33 @@ angular.module('forinlanguages.peer', [])
           $scope.$digest();
           saveAs(blob, data.filename);
         } else if (data.type === "file-chunk" || data.type === "file-chunk-last") {
-          var bool = false;
-          $localForage.setItem(data.order + data.name, data.data).then(function() {
-            if(data.type === "file-chunk-last") {
-              bool = true;
-              var want = data.order;
-            }
-            var need = 0
-            if(bool) {
-              console.log("IF BOOL");
-              var arr = [];
-              $localForage.iterate(function(val, key) {
-                if(key.indexOf(data.name) !== -1) {
-                  need++;
-                  var toPush = {order: key, data: val};
-                  console.log("toPush", toPush);
-                  arr.push(toPush);
-                  console.log("arr", arr);
-                }
-              }).then(function() {
-                console.log("ARR", arr);
-                console.log("NEED", need);
-                console.log("WANT", want);
-                console.log((need-1) == want);
-                if((need-1) == want) {
-                  console.log('we got in here');
-                  arr = _.sortBy(arr, 'order');
-                  console.log('sorted array', arr);
-                  var justBlobs = [];
-                  for(var x = 0; x < arr.length; x++) {
-                    var intarr = new Uint8Array(arr[x].data);
-                    var blob = new Blob([intarr]);
-                    justBlobs.push(blob);
-                  }
-                  var bigBlob = new Blob(justBlobs);
-                  saveAs(bigBlob, data.name);
-                  $localForage.clear(function() {
-                    console.log("Cleared localforage");
-                  })
-                }
-              });
+          if(meta[data.name] === undefined) {
+            meta[data.name] = {};
+            meta[data.name].need = 0;
+            meta[data.name].bool = false;
+          }
+          if(data.type === "file-chunk-last") {
+            meta[data.name].bool = true;
+            meta[data.name].want = data.order;
+          }
+          var intarr = new Uint8Array(data.data);
+          var blob = new Blob([intarr]);
+          $localForage.setItem(data.order + data.name, blob).then(function(val) {
+            meta[data.name].need++;
+            if(meta[data.name].bool) {
+              if(meta[data.name].want == (meta[data.name].need - 1)) {
+                $localForage.setItem("array_" + data.name, []).then(function(arr) {
+                  $localForage.iterate(function(val, key) {
+                    if(key.indexOf(data.name) !== -1) {
+                      arr[parseInt(key.slice(0, key.indexOf(data.name)))] = val;
+                    }
+                  }).then(function() {
+                    $localForage.setItem('bigblob_' + data.name, new Blob(arr)).then(function(inner) {
+                      saveAs(inner, data.name);
+                    });
+                  });
+                })
+              }
             }
           });
         } else {
@@ -138,14 +123,12 @@ angular.module('forinlanguages.peer', [])
       $scope.messages.push("" + dataToSend.time + " - " + dataToSend.name + ": " + dataToSend.rawdat);
     } else if (type === "file") {
       for(var x = 0; x < $scope.file.length; x++) {
-        console.log("File selected:", $scope.file[x]);
         if($scope.file.size < (5 * 1000 * 1000)) {
           return PeerFactory.sendData($scope.file[x], $scope.peers);
         }
         // Both assigns metadata required later and does the chunking
         var bool = false, want = 0;
         PeerFactory.chunker($scope.file[x], function(dat, meta) {
-          console.log("chunker returned", dat);
           var order = dat.order;
           if(dat.type === "file-chunk-last") {
             order = dat.order + "-LAST";
@@ -154,20 +137,14 @@ angular.module('forinlanguages.peer', [])
             // Only start checking once we reach the last file chunk, it's a-sync so we have to set up the bool just in case
             // we get the last file chunk right before adding another chunk if that makes any sense lololol
             if(dat.type === "file-chunk-last") {
-              console.log("landed on last chunk")
               bool = true;
               want = dat.order;
             }
             var have = 0;
-            console.log('testing bool', bool);
             if(bool) {
               $localForage.iterate(function(val,key) {
-                console.log("outer key", key);
-                console.log("ITERATING OVER:", val);
                 have++;
               }).then(function() {
-                console.log("have", have);
-                console.log("Want", want);
                 if((have-1) === want) {
                   $localForage.iterate(function(val,key) {
                     if(key.indexOf("LAST") !== -1) {
@@ -181,9 +158,7 @@ angular.module('forinlanguages.peer', [])
             }
           });
         });
-        $localForage.clear(function() {
-          console.log("Cleared local forage");
-        });
+        $localForage.clear();
       }
     } else {
       alert("you screwed up");
@@ -213,11 +188,14 @@ angular.module('forinlanguages.peer', [])
     })
   }
 
-  $window.onunload = $window.onbeforeunload = function(e) {
+  $scope.clearLocalForage = function() {
+    $localForage.clear();
+  }
+
+  $window.onunload = function(e) {
+    console.log("ON UNLOAD")
     $scope.me.destroy();
-    $localForage.clear(function() {
-      console.log("Cleared local forage");
-    });
+    $localForage.clear();
   };
 
   $scope.$watch('file', function (files, old) {
