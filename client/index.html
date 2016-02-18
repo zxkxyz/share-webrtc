@@ -39,9 +39,7 @@
       <input type="text" name="username" ng-model="username">
 
 
-    <label for="input">Peer:</label>
-    <input type="text" name="input" ng-model="person">
-    <button ng-click="connectTo()">Connect</button>
+
     <!-- <button ng-click="destroyPeer()">Disconnect</button>
     <button ng-click="logPeers()">Log peers</button>
     <button ng-click="logMe()">Log me</button>
@@ -49,6 +47,11 @@
     <button ng-click="clearLocalForage()">Clear localForage</button> -->
 
       
+
+
+      <label for="input">Peer:</label>
+      <input type="text" name="input" ng-model="person"  ng-keypress="isEnter($event,connectTo,[])" value ="">
+      <button ng-click="connectTo()">Connect</button>
 
 
       <h3>My ID: {{ me.id }}</h3>/
@@ -78,7 +81,8 @@
     <div class='chatArea'>
       <form ng-submit ='sendData("message")'>
         <div> Enter Chat messages</div>
-        <textarea name="message" id="textInput" ng-model='message' required></textarea>
+        <textarea name="message" id="textInput" ng-model='message' ng-keypress="isEnter($event,sendData,['message'])" required></textarea>
+        <div>{{ test }} </div>
         <button type='submit'>Send</button>
       </form>
 
