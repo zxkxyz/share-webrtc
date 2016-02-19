@@ -1,7 +1,10 @@
 {
-  "name": "peerJSp2p",
-  "version": "0.0.0",
-  "description": "our greenfield project peer 2 peer sharing",
+  "name": "ForInLanguages",
+  "version": "1.0.0",
+  "description": "Simple Peer 2 Peer File Sharing.",
+  "engines": {
+    "node": "5.6.0"
+  }
   "dependencies": {
     "body-parser": "^1.15.0",
     "bower": "^1.7.7",
