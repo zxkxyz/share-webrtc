@@ -129,13 +129,14 @@ angular.module('forinlanguages.peer', [])
     } else if (type === "file") {
       for(var x = 0; x < $scope.file.length; x++) {
         if($scope.file[x].size < (16 * 1000 * 1000)) {
-          return PeerFactory.sendData({
+          PeerFactory.sendData({
             rawdat: $scope.file[x],
             time: moment().format('h:mm:ss a'),
             name: $scope.username || "anonymous",
             filename: $scope.file[x].name,
             type: "file"
           }, $scope.peers);
+          continue;
         }
         // Both assigns metadata required later and does the chunking
         var bool = false, want = 0;
@@ -171,7 +172,7 @@ angular.module('forinlanguages.peer', [])
   }
   $scope.destroyPeer = function() {
     console.log("destroyed func!");
-    console.log('before', $scope.me); 
+    console.log('before', $scope.me);
     $scope.me.destroy();
     console.log("after", $scope.me);
   };
