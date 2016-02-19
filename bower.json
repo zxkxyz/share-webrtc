@@ -27,8 +27,7 @@
     "file-saver.js": "^1.20150507.2",
     "localforage": "^1.4.0",
     "angular-localforage": "^1.2.5",
-    "underscore": "^1.8.3"
-    "filesaver": "*",
+    "underscore": "^1.8.3",
     "FileSaver": "https://github.com/Teleborder/FileSaver.js",
     "semantic": "^2.1.8"
   }
