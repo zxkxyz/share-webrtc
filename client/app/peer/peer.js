@@ -66,38 +66,42 @@ angular.module('forinlanguages.peer', [])
         if(data.type === "file") {
           var arr = new Uint8Array(data.rawdat);
           var blob = new Blob([arr]);
-          var blobUrl = window.URL.createObjectURL(blob);
-          $scope.files.push(blobUrl);
-          $scope.$digest();
           saveAs(blob, data.filename);
         } else if (data.type === "file-chunk" || data.type === "file-chunk-last") {
-          if(meta[data.name] === undefined) {
-            meta[data.name] = {};
-            meta[data.name].need = 0;
-            meta[data.name].bool = false;
+          var name = data.name;
+          if(meta[name] === undefined) {
+            meta[name] = {
+              need: 0,
+              bool: false
+            };
           }
           if(data.type === "file-chunk-last") {
-            meta[data.name].bool = true;
-            meta[data.name].want = data.order;
+            meta[name].bool = true;
+            meta[name].want = data.order;
           }
-          var intarr = new Uint8Array(data.data);
-          var blob = new Blob([intarr]);
-          $localForage.setItem(data.order + data.name, blob).then(function(val) {
-            meta[data.name].need++;
-            if(meta[data.name].bool) {
-              if(meta[data.name].want == (meta[data.name].need - 1)) {
-                $localForage.setItem("array_" + data.name, []).then(function(arr) {
-                  $localForage.iterate(function(val, key) {
-                    if(key.indexOf(data.name) !== -1) {
-                      arr[parseInt(key.slice(0, key.indexOf(data.name)))] = val;
-                    }
-                  }).then(function() {
-                    $localForage.setItem('bigblob_' + data.name, new Blob(arr)).then(function(inner) {
-                      saveAs(inner, data.name);
-                    });
+          $localForage.setItem(data.order + "RECEIVED" + name, new Blob([new Uint8Array(data.data)])).then(function() {
+            meta[name].need++;
+            // To help with garbage collection.
+            // delete data;
+            // console.log('deleted data');
+            console.log("BOOL", meta[name].bool);
+            console.log("WANT:", meta[name].want);
+            console.log("NEED:", meta[name].need);
+            if(meta[name].bool && (meta[name].want == (meta[name].need))) {
+              console.log("GOT IN HERE")
+              $localForage.setItem("array_" + name, []).then(function(arr) {
+                console.log("made the big array")
+                $localForage.iterate(function(val, key) {
+                  if(key.indexOf("RECEIVED" + name) !== -1) {
+                    arr[parseInt(key.slice(0, key.indexOf("RECEIVED"))) - 1] = val;
+                    $localForage.removeItem(key);
+                  }
+                }).then(function() {
+                  $localForage.setItem('bigblob_' + name, new Blob(arr)).then(function(inner) {
+                    saveAs(inner, name);
                   });
-                })
-              }
+                });
+              })
             }
           });
         } else {
@@ -124,42 +128,36 @@ angular.module('forinlanguages.peer', [])
       $scope.messages.push(dataToSend);
     } else if (type === "file") {
       for(var x = 0; x < $scope.file.length; x++) {
-        if($scope.file.size < (5 * 1000 * 1000)) {
-          return PeerFactory.sendData($scope.file[x], $scope.peers);
+        if($scope.file[x].size < (16 * 1000 * 1000)) {
+          return PeerFactory.sendData({
+            rawdat: $scope.file[x],
+            time: moment().format('h:mm:ss a'),
+            name: $scope.username || "anonymous",
+            filename: $scope.file[x].name,
+            type: "file"
+          }, $scope.peers);
         }
         // Both assigns metadata required later and does the chunking
         var bool = false, want = 0;
-        PeerFactory.chunker($scope.file[x], function(dat, meta) {
-          var order = dat.order;
-          if(dat.type === "file-chunk-last") {
-            order = dat.order + "-LAST";
-          }
-          $localForage.setItem(order, dat.data).then(function() {
-            // Only start checking once we reach the last file chunk, it's a-sync so we have to set up the bool just in case
-            // we get the last file chunk right before adding another chunk if that makes any sense lololol
-            if(dat.type === "file-chunk-last") {
-              bool = true;
-              want = dat.order;
-            }
-            var have = 0;
-            if(bool) {
-              $localForage.iterate(function(val,key) {
-                have++;
-              }).then(function() {
-                if((have-1) === want) {
-                  $localForage.iterate(function(val,key) {
-                    if(key.indexOf("LAST") !== -1) {
-                      PeerFactory.sendData({name: meta.name, order: key.slice(0, key.indexOf("-LAST")), data: val, type: "file-chunk-last"}, $scope.peers);
-                    } else {
-                      PeerFactory.sendData({name: meta.name, order: key, data: val, type: "file-chunk"}, $scope.peers);
-                    }
-                  });
-                }
-              })
+        PeerFactory.chunker($scope.file[x], function(meta) {
+          $localForage.iterate(function(val, key) {
+            if(key.indexOf("SENT" + meta.name) !== -1) {
+              if(key.indexOf("-LAST") !== -1) {
+                PeerFactory.sendData({
+                  name: meta.name,
+                  order: key.slice(0, key.indexOf("-LAST")),
+                  data: val, type: "file-chunk-last"
+                }, $scope.peers);
+              } else {
+                PeerFactory.sendData({
+                  name: meta.name,
+                  order: key.slice(0, key.indexOf("SENT")),
+                  data: val, type: "file-chunk"
+                }, $scope.peers);
+              }
             }
           });
         });
-        $localForage.clear();
       }
     } else {
       alert("you screwed up");

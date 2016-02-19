@@ -16,6 +16,7 @@ angular.module('forinlanguages.services', [])
   var handleConnection = function(c, msgCb, peerCb, dataCb) {
     console.log("connection:", c);
     c.on('data', function(data) {
+      console.log("Got data", data);
       if(data.type === "message") {
         msgCb(data);
       } else if(data.type === "file") {
@@ -38,7 +39,7 @@ angular.module('forinlanguages.services', [])
   };
 
   var sendData = function(data, peers) {
-    console.log('sending this', data);
+    console.log("Sending:", data);
     for(var x in peers) {
       peers[x].send(data);
     }
@@ -51,21 +52,20 @@ angular.module('forinlanguages.services', [])
       name: data.name,
       size: data.size,
     }
-    console.log("chunker", data);
-    console.log("size of data", data.size);
-    var prev = 0;
-    var x = 0;
-    for(; x < Math.floor(data.size/chunkSize); x++) {
-      var block = data.slice(prev, prev + chunkSize);
-      console.log("Block", block);
-      var dat = {data: block, order: x, name: data.name, type: "file-chunk"};
-      console.log("dat", dat);
-      cb(dat, meta);
-      prev += chunkSize;
-    }
-    var dat = {data: data.slice(prev, data.size), order: x, name: data.name, type: "file-chunk-last"};
-    cb(dat, meta);
-    console.log("Data size:", data.size);
+
+    var storeItem = function(prev, last) {
+      $localForage.setItem(Math.floor((prev + chunkSize)/chunkSize) + "SENT" + meta.name, data.slice(prev, prev + chunkSize)).then(function() {
+        if((meta.size - (prev + chunkSize)) < chunkSize) {
+          $localForage.setItem(Math.ceil(meta.size/chunkSize) + '-LAST' + "SENT" + meta.name, data.slice(prev + chunkSize, meta.size)).then(function() {
+            return cb(meta);
+          });
+        } else {
+          storeItem(prev + chunkSize, false);
+        }
+      });
+    };
+
+    storeItem(0, false);
   };
 
   return {
