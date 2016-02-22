@@ -21,7 +21,7 @@ angular.module('forinlanguages.services', [])
   var handleConnection = function(c, msgCb, peerCb, dataCb) {
     // console.log("connection:", c);
     c.on('data', function(data) {
-      // console.log("Got data", data);
+      console.log("Got data", data);
       if(data.type === "message") {
         msgCb(data);
       } else if(data.type === "file") {
