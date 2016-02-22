@@ -21,8 +21,6 @@ angular.module('forinlanguages.peer', [])
     $scope.url = "/p/" + id;
     $scope.$digest();
 
-    console.log($scope.me);
-
     $scope.me.on('connection', function(c) {
       $scope.handleConnection(c);
     });
