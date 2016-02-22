@@ -5,7 +5,12 @@ angular.module('forinlanguages.services', [])
   var makePeer = function(cb) {
     var newurl;
     var newPeer = new Peer({
-      key: '6ph8w4mjh1cq5mi'
+      key: '6ph8w4mjh1cq5mi',
+      debug: 3,
+      logFunction: function() {
+        var copy = Array.prototype.slice.call(arguments).join(' ');
+        console.log(copy);
+      }
     });
     newPeer.on('open', function(id) {
       console.log("Opened with ID:", id);
