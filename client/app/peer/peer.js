@@ -64,9 +64,12 @@ angular.module('forinlanguages.peer', [])
       },
       function(data) {
         if(data.type === "file") {
-          var arr = new Uint8Array(data.rawdat);
-          var blob = new Blob([arr]);
-          saveAs(blob, data.filename);
+          $localForage.setItem("bigblob_" + data.filename, new Blob([new Uint8Array(data.rawdat)]).then(function(item) {
+            saveAs(item, data.filename);
+          });
+          // var arr = new Uint8Array(data.rawdat);
+          // var blob = new Blob([arr]);
+          // saveAs(blob, data.filename);
         } else if (data.type === "file-chunk" || data.type === "file-chunk-last") {
           var name = data.name;
           if(meta[name] === undefined) {
@@ -84,13 +87,8 @@ angular.module('forinlanguages.peer', [])
             // To help with garbage collection.
             // delete data;
             // console.log('deleted data');
-            console.log("BOOL", meta[name].bool);
-            console.log("WANT:", meta[name].want);
-            console.log("NEED:", meta[name].need);
             if(meta[name].bool && (meta[name].want == (meta[name].need))) {
-              console.log("GOT IN HERE")
               $localForage.setItem("array_" + name, []).then(function(arr) {
-                console.log("made the big array")
                 $localForage.iterate(function(val, key) {
                   if(key.indexOf("RECEIVED" + name) !== -1) {
                     arr[parseInt(key.slice(0, key.indexOf("RECEIVED"))) - 1] = val;
