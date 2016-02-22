@@ -64,7 +64,7 @@ angular.module('forinlanguages.peer', [])
       },
       function(data) {
         if(data.type === "file") {
-          $localForage.setItem("bigblob_" + data.filename, new Blob([new Uint8Array(data.rawdat)]).then(function(item) {
+          $localForage.setItem("bigblob_" + data.filename, new Blob([new Uint8Array(data.rawdat)])).then(function(item) {
             saveAs(item, data.filename);
           });
           // var arr = new Uint8Array(data.rawdat);
