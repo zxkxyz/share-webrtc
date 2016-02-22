@@ -127,6 +127,7 @@ angular.module('forinlanguages.peer', [])
       };
       PeerFactory.sendData(dataToSend, $scope.peers);
       $scope.messages.push(dataToSend);
+      $scope.message = "";
     } else if (type === "file") {
       for(var x = 0; x < $scope.file.length; x++) {
         if($scope.file[x].size < (16 * 1024 * 1024)) {
@@ -141,30 +142,8 @@ angular.module('forinlanguages.peer', [])
         }
         // Both assigns metadata required later and does the chunking
         var bool = false, want = 0;
-        PeerFactory.chunker($scope.file[x], function(meta) {
-          $localForage.iterate(function(val, key) {
-            if(key.indexOf("SENT" + meta.name) !== -1) {
-              if(key.indexOf("-LAST") !== -1) {
-                PeerFactory.sendData({
-                  name: meta.name,
-                  order: key.slice(0, key.indexOf("-LAST")),
-                  data: val, type: "file-chunk-last"
-                }, $scope.peers);
-              } else {
-                PeerFactory.sendData({
-                  name: meta.name,
-                  order: key.slice(0, key.indexOf("SENT")),
-                  data: val, type: "file-chunk"
-                }, $scope.peers);
-              }
-            }
-          }).then(function() {
-            $localForage.iterate(function(val, key) {
-              if(key.indexOf("SENT" + meta.name) !== -1) {
-                $localForage.removeItem(key);
-              }
-            })
-          });
+        PeerFactory.chunker($scope.file[x], $scope.peers, function(name) {
+          console.log("Completed chunking/sending of file " + name);
         });
       }
     } else {

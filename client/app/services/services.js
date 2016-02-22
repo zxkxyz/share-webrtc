@@ -43,14 +43,14 @@ angular.module('forinlanguages.services', [])
     return c;
   };
 
+  // Do not use if sending big chunked files.
   var sendData = function(data, peers) {
-    console.log("Sending:", data);
     for(var x in peers) {
       peers[x].send(data);
     }
   };
 
-  var chunker = function(data, cb) {
+  var chunker = function(data, peers, cb) {
     var chunkSize = 16 * 1024 * 1024;
     var meta = {
       totalChunks: Math.ceil(data.size/chunkSize),
@@ -58,21 +58,43 @@ angular.module('forinlanguages.services', [])
       size: data.size,
     }
 
+    var chunk = null;
     var storeItem = function(prev, last) {
-      $localForage.setItem(Math.floor((prev + chunkSize)/chunkSize) + "SENT" + meta.name, data.slice(prev, prev + chunkSize))
-      .then(function() {
+      // $localForage.setItem(Math.floor((prev + chunkSize)/chunkSize) + "SENT" + meta.name, data.slice(prev, prev + chunkSize))
+      // .then(function(item) {
+        // Send the chunk right after chunking it
+        chunk = data.slice(prev, prev + chunkSize);
+        for(var x in peers) {
+          peers[x].send({
+            name: meta.name,
+            order: Math.floor((prev + chunkSize)/chunkSize),
+            data: chunk,
+            type: "file-chunk"
+          });
+        }
         if((meta.size - (prev + chunkSize)) < chunkSize) {
           // If we're on the last chunk, save it
-          $localForage.setItem(Math.ceil(meta.size/chunkSize) + '-LAST' + "SENT" + meta.name, data.slice(prev + chunkSize, meta.size))
-          .then(function() {
+          // $localForage.setItem(Math.ceil(meta.size/chunkSize) + '-LAST' + "SENT" + meta.name, data.slice(prev + chunkSize, meta.size))
+          // .then(function(lastItem) {
             // Trigger the callback because we're finished
-            return cb(meta);
-          });
+            // debugger;
+            chunk = data.slice(prev + chunkSize, meta.size);
+            for(var x in peers) {
+              peers[x].send({
+                name: meta.name,
+                order: Math.ceil(meta.size/chunkSize),
+                data: chunk,
+                type: "file-chunk-last"
+              });
+            }
+            // Let the caller know we've finished.
+            return cb(meta.name);
+          // });
         } else {
           // Recurse and save next chunk
           storeItem(prev + chunkSize, false);
         }
-      });
+      // });
     };
     // Initial call of storeItem
     storeItem(0, false);
