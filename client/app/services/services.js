@@ -6,7 +6,7 @@ angular.module('forinlanguages.services', [])
     var newurl;
     var newPeer = new Peer({
       key: '6ph8w4mjh1cq5mi',
-      debug: 3,
+      debug: 0,
       logFunction: function() {
         var copy = Array.prototype.slice.call(arguments).join(' ');
         console.log(copy);
@@ -19,9 +19,9 @@ angular.module('forinlanguages.services', [])
   };
 
   var handleConnection = function(c, msgCb, peerCb, dataCb) {
-    console.log("connection:", c);
+    // console.log("connection:", c);
     c.on('data', function(data) {
-      console.log("Got data", data);
+      // console.log("Got data", data);
       if(data.type === "message") {
         msgCb(data);
       } else if(data.type === "file") {
@@ -59,17 +59,22 @@ angular.module('forinlanguages.services', [])
     }
 
     var storeItem = function(prev, last) {
-      $localForage.setItem(Math.floor((prev + chunkSize)/chunkSize) + "SENT" + meta.name, data.slice(prev, prev + chunkSize)).then(function() {
+      $localForage.setItem(Math.floor((prev + chunkSize)/chunkSize) + "SENT" + meta.name, data.slice(prev, prev + chunkSize))
+      .then(function() {
         if((meta.size - (prev + chunkSize)) < chunkSize) {
-          $localForage.setItem(Math.ceil(meta.size/chunkSize) + '-LAST' + "SENT" + meta.name, data.slice(prev + chunkSize, meta.size)).then(function() {
+          // If we're on the last chunk, save it
+          $localForage.setItem(Math.ceil(meta.size/chunkSize) + '-LAST' + "SENT" + meta.name, data.slice(prev + chunkSize, meta.size))
+          .then(function() {
+            // Trigger the callback because we're finished
             return cb(meta);
           });
         } else {
+          // Recurse and save next chunk
           storeItem(prev + chunkSize, false);
         }
       });
     };
-
+    // Initial call of storeItem
     storeItem(0, false);
   };
 

@@ -95,8 +95,13 @@ angular.module('forinlanguages.peer', [])
                     $localForage.removeItem(key);
                   }
                 }).then(function() {
-                  $localForage.setItem('bigblob_' + name, new Blob(arr)).then(function(inner) {
+                  $localForage.setItem('bigblob_' + name, new Blob(arr))
+                  .then(function(inner) {
                     saveAs(inner, name);
+                  })
+                  .then(function() {
+                    $localForage.removeItem('bigblob_' + name);
+                    $localForage.removeItem('array_' + name);
                   });
                 });
               })
@@ -155,6 +160,12 @@ angular.module('forinlanguages.peer', [])
                 }, $scope.peers);
               }
             }
+          }).then(function() {
+            $localForage.iterate(function(val, key) {
+              if(key.indexOf("SENT" + meta.name) !== -1) {
+                $localForage.removeItem(key);
+              }
+            })
           });
         });
       }

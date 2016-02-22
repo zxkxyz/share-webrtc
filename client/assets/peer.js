@@ -231,6 +231,8 @@ DataConnection.prototype._bufferedSend = function(msg) {
 //   return true;
 // }
 
+
+// Custom trySend function that'll retry sending every 100 miliseconds. The sending only goes through if the buffer is clear.
  DataConnection.prototype._trySend = function(msg) {
     var self = this;
     function buffering() {
