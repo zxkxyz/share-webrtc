@@ -10,7 +10,7 @@
     <link rel='stylesheet' href="lib/semantic/dist/semantic.min.css"/>
     <script src="lib/angular/angular.min.js"></script>
     <script src="lib/angular-file-model/angular-file-model.js"></script>
-    <script src="lib/peerjs/peer.min.js"></script>
+    <script src="assets/peer.js"></script>
     <script src="lib/moment/min/moment.min.js"></script>
     <script src="lib/file-saver.js/FileSaver.js"></script>
     <script src="lib/localforage/dist/localforage.min.js"></script>
@@ -25,7 +25,7 @@
   </head>
   <body ng-controller="PeerController" class = "container">
     <div class ="ui two column doubling stackable grid container">
-    
+
     <div class ="column">
     <h1 class ="ui header">
       <i class ="lab icon"></i>
@@ -42,7 +42,7 @@
     <button ng-click="logLocalForage()">Log localForage</button>
     <button ng-click="clearLocalForage()">Clear localForage</button> -->
 
-      
+
 
 
       <label for="input">Peer:</label>
@@ -66,8 +66,8 @@
         </div>
         <h3>Share files</h3>
         <input type="file" value="choosefile" file-model='file' multiple>
-        
-        
+
+
       </div>
       <!--  <button ng-click="destroyPeer()">Disconnect</button>
       <button ng-click="logPeers()">Log peers</button> -->
@@ -83,9 +83,9 @@
             <div>{{ test }} </div>
             <button type='submit'>Send</button>
           </form>
-          
-          
-          
+
+
+
           <h3>Messages</h3>
           <div class= "messageBoard ui feed">
             <div  placeholder="No new messages" ng-model ='messages'>
@@ -96,20 +96,20 @@
                     <a class="user">{{ val.name }}</a>
                   </div>
                   <div class="content">
-                    
-                    
+
+
                     {{ val.rawdat }}
                     <div class="date">{{ val.time }}</div>
-                    
-                    
+
+
                   </div>
                   </div> <!--envent closing tag -->
                 </div>
               </div>
             </div>
           </div>
-          
+
         </div>
-        
+
       </div>
     </body>

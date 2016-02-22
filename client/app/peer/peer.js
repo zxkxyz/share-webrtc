@@ -126,7 +126,7 @@ angular.module('forinlanguages.peer', [])
       $scope.messages.push(dataToSend);
     } else if (type === "file") {
       for(var x = 0; x < $scope.file.length; x++) {
-        if($scope.file[x].size < (16 * 1000 * 1000)) {
+        if($scope.file[x].size < (16 * 1024 * 1024)) {
           PeerFactory.sendData({
             rawdat: $scope.file[x],
             time: moment().format('h:mm:ss a'),
