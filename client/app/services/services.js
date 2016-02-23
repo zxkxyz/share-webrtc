@@ -51,7 +51,7 @@ angular.module('forinlanguages.services', [])
   };
 
   var chunker = function(data, peers, cb) {
-    var chunkSize = 5 * 1024 * 1024;
+    var chunkSize = 16 * 1024 * 1024;
     var meta = {
       totalChunks: Math.ceil(data.size/chunkSize),
       name: data.name,
@@ -62,14 +62,14 @@ angular.module('forinlanguages.services', [])
       $localForage.setItem(Math.floor((prev + chunkSize)/chunkSize) + "SENT" + meta.name, data.slice(prev, prev + chunkSize))
       .then(function(item) {
         // Send the chunk right after chunking it
-        for(var x in peers) {
-          peers[x].send({
+        setTimeout(function() {
+          sendData({
             name: meta.name,
             order: Math.floor((prev + chunkSize)/chunkSize),
             data: item,
             type: "file-chunk"
-          });
-        }
+          })
+        }, 100);
       })
       .then(function() {
         if((meta.size - (prev + chunkSize)) < chunkSize) {
@@ -78,14 +78,14 @@ angular.module('forinlanguages.services', [])
           .then(function(lastItem) {
             // Trigger the callback because we're finished
             // debugger;
-            for(var x in peers) {
-              peers[x].send({
+            setTimeout(function() {
+              sendData({
                 name: meta.name,
                 order: Math.ceil(meta.size/chunkSize),
                 data: lastItem,
                 type: "file-chunk-last"
-              });
-            }
+              })
+            }, 100);
             // Let the caller know we've finished.
             return cb(meta.name);
           });
