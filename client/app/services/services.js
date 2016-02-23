@@ -19,7 +19,7 @@ angular.module('forinlanguages.services', [])
   };
 
   var handleConnection = function(c, msgCb, peerCb, dataCb) {
-    // console.log("connection:", c);
+    console.log("connection:", c);
     c.on('data', function(data) {
       console.log("Got data", data);
       if(data.type === "message") {
@@ -65,16 +65,20 @@ angular.module('forinlanguages.services', [])
       obj.order = Math.floor((prev + chunkSize)/chunkSize);
       obj.data = data.slice(prev, prev + chunkSize);
       obj.type = "file-chunk";
-      sendData(obj);
+      for(var x in peers) {
+        peers[x].send(obj);
+      }
       prev += chunkSize;
     }
     var obj = {};
     obj.name = meta.name;
+    obj.order = Math.ceil(meta.size/chunkSize);
     obj.data = data.slice(prev, meta.size);
     obj.type = "file-chunk-last";
-    obj.order = Math.ceil(meta.size/chunkSize);
-    sendData(obj);
-    cb(meta.name);
+    for(var x in peers) {
+      peers[x].send(obj);
+    }
+    return cb(meta.name);
 
 
     // Old chunking function that used localForage. Deprecated.
