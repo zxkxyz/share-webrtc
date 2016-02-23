@@ -63,12 +63,14 @@ angular.module('forinlanguages.services', [])
       .then(function(item) {
         // Send the chunk right after chunking it
         setTimeout(function() {
-          sendData({
-            name: meta.name,
-            order: Math.floor((prev + chunkSize)/chunkSize),
-            data: item,
-            type: "file-chunk"
-          })
+          for(var x in peers) {
+            peers[x].send({
+              name: meta.name,
+              order: Math.floor((prev + chunkSize)/chunkSize),
+              data: item,
+              type: "file-chunk"
+            })
+          }
         }, 100);
       })
       .then(function() {
@@ -79,12 +81,14 @@ angular.module('forinlanguages.services', [])
             // Trigger the callback because we're finished
             // debugger;
             setTimeout(function() {
-              sendData({
-                name: meta.name,
-                order: Math.ceil(meta.size/chunkSize),
-                data: lastItem,
-                type: "file-chunk-last"
-              })
+              for(var x in peers) {
+                peers[x].send({
+                  name: meta.name,
+                  order: Math.ceil(meta.size/chunkSize),
+                  data: lastItem,
+                  type: "file-chunk-last"
+                });
+              }
             }, 100);
             // Let the caller know we've finished.
             return cb(meta.name);
