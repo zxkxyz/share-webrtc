@@ -6,7 +6,7 @@ angular.module('forinlanguages.services', [])
     var newurl;
     var newPeer = new Peer({
       key: '6ph8w4mjh1cq5mi',
-      debug: 3,
+      debug: 0,
       logFunction: function() {
         var copy = Array.prototype.slice.call(arguments).join(' ');
         console.log(copy);
@@ -65,6 +65,7 @@ angular.module('forinlanguages.services', [])
       obj.order = Math.floor((prev + chunkSize)/chunkSize);
       obj.data = data.slice(prev, prev + chunkSize);
       obj.type = "file-chunk";
+      console.log("Will send", obj);
       for(var x in peers) {
         peers[x].send(obj);
       }
@@ -75,6 +76,7 @@ angular.module('forinlanguages.services', [])
     obj.order = Math.ceil(meta.size/chunkSize);
     obj.data = data.slice(prev, meta.size);
     obj.type = "file-chunk-last";
+    console.log("Will send", obj);
     for(var x in peers) {
       peers[x].send(obj);
     }
