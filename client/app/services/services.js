@@ -59,15 +59,18 @@ angular.module('forinlanguages.services', [])
     }
 
     var prev = 0;
-    for(var x = 0; x < meta.totalChunks - 1; x++) {
+    console.log("META", meta);
+    var x = 0
+    for(; x < (meta.totalChunks - 1); x++) {
+      console.log(x);
       var obj = {};
       obj.name = meta.name;
       obj.order = Math.floor((prev + chunkSize)/chunkSize);
       obj.data = data.slice(prev, prev + chunkSize);
       obj.type = "file-chunk";
       console.log("Will send", obj);
-      for(var x in peers) {
-        peers[x].send(obj);
+      for(var y in peers) {
+        peers[y].send(obj);
       }
       prev += chunkSize;
     }
@@ -77,8 +80,8 @@ angular.module('forinlanguages.services', [])
     obj.data = data.slice(prev, meta.size);
     obj.type = "file-chunk-last";
     console.log("Will send", obj);
-    for(var x in peers) {
-      peers[x].send(obj);
+    for(var y in peers) {
+      peers[y].send(obj);
     }
     return cb(meta.name);
 
