@@ -43,7 +43,6 @@ angular.module('forinlanguages.services', [])
     return c;
   };
 
-  // Do not use if sending big files.
   var sendData = function(data, peers) {
     console.log("Sending:", data);
     for(var x in peers) {
@@ -71,6 +70,8 @@ angular.module('forinlanguages.services', [])
             type: "file-chunk"
           });
         }
+      })
+      .then(function() {
         if((meta.size - (prev + chunkSize)) < chunkSize) {
           // If we're on the last chunk, save it
           $localForage.setItem(Math.ceil(meta.size/chunkSize) + '-LAST' + "SENT" + meta.name, data.slice(prev + chunkSize, meta.size))
