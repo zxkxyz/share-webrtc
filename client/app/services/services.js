@@ -68,7 +68,7 @@ angular.module('forinlanguages.services', [])
       if(x === totalChunks) {
         obj.data = data.slice(prev, meta.size);
         obj.type = "file-chunk-last";
-        obj.order: Math.ceil(meta.size/chunkSize);
+        obj.order = Math.ceil(meta.size/chunkSize);
         sendData(obj);
       } else {
         sendData(obj);
