@@ -73,6 +73,7 @@ angular.module('forinlanguages.services', [])
       } else {
         sendData(obj);
       }
+      prev += chunkSize;
     }
     cb(meta.name);
 
