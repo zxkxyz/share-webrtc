@@ -49,9 +49,9 @@
       <button ng-click="connectTo()">Connect</button>
 
 
-      <h3>My ID: {{ me.id }}</h3>/
-    <a href="{{url}}">Your URL</a>
-    <h3>Downloads:</h3>
+    <h3>My ID: {{ me.id }}</h3>
+    <!-- <a href="{{url}}">Your URL</a> -->
+    <!-- <h3>Downloads:</h3> -->
     <div placeholder="No new downloads" ng-model ='files'>
       <div class='message_item' ng-repeat="val in files">
         <a href="{{val}}">{{ val }}</a>
@@ -70,6 +70,7 @@
       </div>
       <!--  <button ng-click="destroyPeer()">Disconnect</button>
       <button ng-click="logPeers()">Log peers</button> -->
+      </div>
       <div class = "column">
         <h3 class ="ui header">
         <i class = "comments icon"></i>
@@ -109,6 +110,4 @@
           </div>
 
         </div>
-
-      </div>
     </body>

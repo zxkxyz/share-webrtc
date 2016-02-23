@@ -1,6 +1,5 @@
 textarea {
    resize: none;
-
 }
 
 .messageBoard {
@@ -9,6 +8,7 @@ textarea {
     color:blue;
     word-wrap: break-word;
     overflow-y: auto;
+    border: 1px solid black;
 }
 
 #textInput {
