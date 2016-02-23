@@ -60,12 +60,12 @@ angular.module('forinlanguages.services', [])
 
     var prev = 0;
     var obj = {};
-    for(var x = 0; x <= totalChunks; x++) {
+    for(var x = 0; x <= meta.totalChunks; x++) {
       obj.name = meta.name;
       obj.order = Math.floor((prev + chunkSize)/chunkSize);
       obj.data = data.slice(prev, prev + chunkSize);
       obj.type = "file-chunk";
-      if(x === totalChunks) {
+      if(x === meta.totalChunks) {
         obj.data = data.slice(prev, meta.size);
         obj.type = "file-chunk-last";
         obj.order = Math.ceil(meta.size/chunkSize);
