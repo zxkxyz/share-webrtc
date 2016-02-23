@@ -58,70 +58,41 @@ angular.module('forinlanguages.services', [])
       size: data.size,
     }
 
-    var prev = 0;
-    console.log("META", meta);
-    var x = 0
-    for(; x < (meta.totalChunks - 1); x++) {
-      console.log(x);
-      var obj = {};
-      obj.name = meta.name;
-      obj.order = Math.floor((prev + chunkSize)/chunkSize);
-      obj.data = data.slice(prev, prev + chunkSize);
-      obj.type = "file-chunk";
-      console.log("Will send", obj);
-      for(var y in peers) {
-        peers[y].send(obj);
-      }
-      prev += chunkSize;
-    }
-    var obj = {};
-    obj.name = meta.name;
-    obj.order = Math.ceil(meta.size/chunkSize);
-    obj.data = data.slice(prev, meta.size);
-    obj.type = "file-chunk-last";
-    console.log("Will send", obj);
-    for(var y in peers) {
-      peers[y].send(obj);
-    }
-    return cb(meta.name);
-
-
-    // Old chunking function that used localForage. Deprecated.
-    // var storeItem = function(prev, last) {
-    //   $localForage.setItem(Math.floor((prev + chunkSize)/chunkSize) + "SENT" + meta.name, data.slice(prev, prev + chunkSize))
-    //   .then(function(item) {
-    //     // Send the chunk right after chunking it
-    //     sendData({
-    //       name: meta.name,
-    //       order: Math.floor((prev + chunkSize)/chunkSize),
-    //       data: item,
-    //       type: "file-chunk"
-    //     });
-    //   })
-    //   .then(function() {
-    //     if((meta.size - (prev + chunkSize)) < chunkSize) {
-    //       // If we're on the last chunk, save it
-    //       $localForage.setItem(Math.ceil(meta.size/chunkSize) + '-LAST' + "SENT" + meta.name, data.slice(prev + chunkSize, meta.size))
-    //       .then(function(lastItem) {
-    //         // Trigger the callback because we're finished
-    //         // debugger;
-    //         sendData({
-    //           name: meta.name,
-    //           order: Math.ceil(meta.size/chunkSize),
-    //           data: lastItem,
-    //           type: "file-chunk-last"
-    //         });
-    //         // Let the caller know we've finished.
-    //         return cb(meta.name);
-    //       });
-    //     } else {
-    //       // Recurse and save next chunk
-    //       storeItem(prev + chunkSize, false);
-    //     }
-    //   });
-    // };
-    // // Initial call of storeItem
-    // storeItem(0, false);
+    var storeItem = function(prev, last) {
+      $localForage.setItem(Math.floor((prev + chunkSize)/chunkSize) + "SENT" + meta.name, data.slice(prev, prev + chunkSize))
+      .then(function(item) {
+        // Send the chunk right after chunking it
+        sendData({
+          name: meta.name,
+          order: Math.floor((prev + chunkSize)/chunkSize),
+          data: item,
+          type: "file-chunk"
+        });
+      })
+      .then(function() {
+        if((meta.size - (prev + chunkSize)) < chunkSize) {
+          // If we're on the last chunk, save it
+          $localForage.setItem(Math.ceil(meta.size/chunkSize) + '-LAST' + "SENT" + meta.name, data.slice(prev + chunkSize, meta.size))
+          .then(function(lastItem) {
+            // Trigger the callback because we're finished
+            // debugger;
+            sendData({
+              name: meta.name,
+              order: Math.ceil(meta.size/chunkSize),
+              data: lastItem,
+              type: "file-chunk-last"
+            });
+            // Let the caller know we've finished.
+            return cb(meta.name);
+          });
+        } else {
+          // Recurse and save next chunk
+          storeItem(prev + chunkSize, false);
+        }
+      });
+    };
+    // Initial call of storeItem
+    storeItem(0, false);
   };
 
   return {
