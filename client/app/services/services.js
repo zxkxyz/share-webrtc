@@ -51,7 +51,7 @@ angular.module('forinlanguages.services', [])
   };
 
   var chunker = function(data, peers, cb) {
-    var chunkSize = 16 * 1024 * 1024;
+    var chunkSize = 5 * 1024 * 1024;
     var meta = {
       totalChunks: Math.ceil(data.size/chunkSize),
       name: data.name,
