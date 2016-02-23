@@ -6,7 +6,7 @@ angular.module('forinlanguages.services', [])
     var newurl;
     var newPeer = new Peer({
       key: '6ph8w4mjh1cq5mi',
-      debug: 0,
+      debug: 3,
       logFunction: function() {
         var copy = Array.prototype.slice.call(arguments).join(' ');
         console.log(copy);
@@ -59,22 +59,21 @@ angular.module('forinlanguages.services', [])
     }
 
     var prev = 0;
-    var obj = {};
-    for(var x = 0; x <= meta.totalChunks; x++) {
+    for(var x = 0; x < meta.totalChunks - 1; x++) {
+      var obj = {};
       obj.name = meta.name;
       obj.order = Math.floor((prev + chunkSize)/chunkSize);
       obj.data = data.slice(prev, prev + chunkSize);
       obj.type = "file-chunk";
-      if(x === meta.totalChunks) {
-        obj.data = data.slice(prev, meta.size);
-        obj.type = "file-chunk-last";
-        obj.order = Math.ceil(meta.size/chunkSize);
-        sendData(obj);
-      } else {
-        sendData(obj);
-      }
+      sendData(obj);
       prev += chunkSize;
     }
+    var obj = {};
+    obj.name = meta.name;
+    obj.data = data.slice(prev, meta.size);
+    obj.type = "file-chunk-last";
+    obj.order = Math.ceil(meta.size/chunkSize);
+    sendData(obj);
     cb(meta.name);
 
 
